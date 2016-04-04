@@ -18,8 +18,7 @@
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9ecb543-0448-432d-ab36-cd668c6d81b8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/app/src/main/java/com/zhexian/magic8ball/MainActivity.java" afterPath="$PROJECT_DIR$/app/src/main/java/com/zhexian/magic8ball/MainActivity.java" />
+    <list default="true" id="e9ecb543-0448-432d-ab36-cd668c6d81b8" name="Default" comment="add event listeners">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="Magic8Ball_Android.iws" />
@@ -1991,6 +1990,13 @@
       <option name="number" value="Default" />
       <updated>1457927052735</updated>
     </task>
+    <task id="LOCAL-00001" summary="add event listeners">
+      <created>1459741719601</created>
+      <option name="number" value="00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1459741719601</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -2039,6 +2045,12 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="add event listeners" />
+    <option name="LAST_COMMIT_MESSAGE" value="add event listeners" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
