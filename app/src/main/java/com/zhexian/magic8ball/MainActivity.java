@@ -78,9 +78,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mTxtQuestion.setSingleLine(true);
         mTxtQuestion.setInputType(EditorInfo.TYPE_TEXT_FLAG_AUTO_COMPLETE);
         mTxtQuestion.setId(1);
+        mTxtQuestion.setOnEditorActionListener(this);
+
 
         // Layout params of the EditText
-        RelativeLayout.LayoutParams mTxtQuestionLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 96);
+        RelativeLayout.LayoutParams mTxtQuestionLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 144);
         mTxtQuestionLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
         mTxtQuestionLayoutParams.setMargins(8, 8, 8, 8);
         mTxtQuestion.setLayoutParams(mTxtQuestionLayoutParams);
@@ -89,9 +91,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mBtnShake = new Button(this);
         mBtnShake.setText("Shake");
         mBtnShake.setId(2);
+        mBtnShake.setOnClickListener(this);
 
         // Layout params of the shake button
-        RelativeLayout.LayoutParams mBtnShakeLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 96);
+        RelativeLayout.LayoutParams mBtnShakeLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 144);
         mBtnShakeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
         mBtnShakeLayoutParams.setMargins(8, 8, 8, 8);
         mBtnShake.setLayoutParams(mBtnShakeLayoutParams);
@@ -135,6 +138,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRelativeLayoutMagicEightBall.addView(mImgMagicEightBall);
         mRelativeLayoutMagicEightBall.addView(mTxtResponse);
         setContentView(mContainer);
+
+        mMagicEightBall = new MagicEightBallModel();
+
+        mFadeOutAnimation = new AlphaAnimation(1, 0);
+        mFadeOutAnimation.setDuration(500);
+
+        mFadeInAnimation = new AlphaAnimation(0, 1);
+        mFadeInAnimation.setDuration(500);
+
     }
 
     @Override
