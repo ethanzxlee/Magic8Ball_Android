@@ -10,7 +10,7 @@ import java.util.Random;
 
 /**
  * Created by ZheXian on 07/03/2016.
- * 
+ *
  */
 public class MagicEightBallModel {
 
