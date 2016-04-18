@@ -5,6 +5,57 @@
     android:layout_height="match_parent"
     tools:context="com.zhexian.magic8ball.MainActivity">
 
+    <ImageView
+        android:id="@+id/img_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/background" />
 
+    <EditText
+        android:id="@+id/txtQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:layout_margin="16dp"
+        android:hint="Ask a question"
+        android:imeOptions="actionGo"
+        android:singleLine="true"
+        android:inputType="textAutoComplete"/>
+
+    <Button
+        android:id="@+id/btnHistory"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"
+        android:text="History" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutMagicEightBall"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btnHistory"
+        android:layout_below="@id/txtQuestion">
+
+        <ImageView
+            android:id="@+id/imgMagicEightBall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/circle1" />
+
+        <TextView
+            android:id="@+id/txtResponse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

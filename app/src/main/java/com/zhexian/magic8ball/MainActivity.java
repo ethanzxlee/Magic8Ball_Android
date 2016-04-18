@@ -1,38 +1,43 @@
 package com.zhexian.magic8ball;
 
 import android.content.Context;
-import android.graphics.Color;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnEditorActionListener {
+
+    private static final String QUESTION_RESPONSE_LIST_FILENAME = "QuestionResponseList.dat";
+    public static final String QUESTION_RESPONSE_LIST_KEY = "QUESTION_RESPONSE_LIST_KEY";
 
     private MagicEightBallModel mMagicEightBall;
     private EditText mTxtQuestion;
     private TextView mTxtResponse;
     private ImageView mImgMagicEightBall;
-    private Button mBtnShake;
+    private Button mBtnHistory;
     private RelativeLayout mRelativeLayoutMagicEightBall;
-    private RelativeLayout mContainer;
-    private ImageView mImgBackground;
-
+    private ArrayList<QuestionResponseModel> mQuestionResponseList;
 
     private AlphaAnimation mFadeOutAnimation;
     private AlphaAnimation mFadeInAnimation;
@@ -49,97 +54,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //        setContentView(R.layout.activity_main);
-
-        // Create a relative layout as the container
-        mContainer = new RelativeLayout(this);
-
-        // Set the layout params of the container
-        FrameLayout.LayoutParams mContainerLayoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mContainerLayoutParams.setMargins(0, 0, 0, 0);
-        mContainer.setLayoutParams(mContainerLayoutParams);
-
-        // ImageView for background image
-        mImgBackground = new ImageView(this);
-        mImgBackground.setScaleType(ImageView.ScaleType.FIT_XY);
-        mImgBackground.setImageResource(R.drawable.background);
-
-        // Layout params of the background image
-        RelativeLayout.LayoutParams mImgBackgroundLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mImgBackgroundLayoutParams.setMargins(0, 0, 0, 0);
-        mImgBackgroundLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        mImgBackgroundLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        mImgBackground.setLayoutParams(mImgBackgroundLayoutParams);
-
-        // EditText for entering question
-        mTxtQuestion = new EditText(this);
-        mTxtQuestion.setHint("Ask a question");
-        mTxtQuestion.setImeOptions(EditorInfo.IME_ACTION_GO);
-        mTxtQuestion.setSingleLine(true);
-        mTxtQuestion.setInputType(EditorInfo.TYPE_TEXT_FLAG_AUTO_COMPLETE);
-        mTxtQuestion.setId(1);
-        mTxtQuestion.setOnEditorActionListener(this);
-
-
-        // Layout params of the EditText
-        RelativeLayout.LayoutParams mTxtQuestionLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 144);
-        mTxtQuestionLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-        mTxtQuestionLayoutParams.setMargins(8, 8, 8, 8);
-        mTxtQuestion.setLayoutParams(mTxtQuestionLayoutParams);
-
-        // Shake button
-        mBtnShake = new Button(this);
-        mBtnShake.setText("Shake");
-        mBtnShake.setId(2);
-        mBtnShake.setOnClickListener(this);
-
-        // Layout params of the shake button
-        RelativeLayout.LayoutParams mBtnShakeLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 144);
-        mBtnShakeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
-        mBtnShakeLayoutParams.setMargins(8, 8, 8, 8);
-        mBtnShake.setLayoutParams(mBtnShakeLayoutParams);
-
-        // Relative layout for the magic eight ball and response
-        mRelativeLayoutMagicEightBall = new RelativeLayout(this);
-
-        // Layout params of the relative layout
-        RelativeLayout.LayoutParams mRelativeLayoutMagicEightBallLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mRelativeLayoutMagicEightBallLayoutParams.addRule(RelativeLayout.BELOW, mTxtQuestion.getId());
-        mRelativeLayoutMagicEightBallLayoutParams.addRule(RelativeLayout.ABOVE, mBtnShake.getId());
-        mRelativeLayoutMagicEightBall.setLayoutParams(mRelativeLayoutMagicEightBallLayoutParams);
-
-        // TextView for the response
-        mTxtResponse = new TextView(this);
-        mTxtResponse.setTextColor(Color.WHITE);
-
-        // Layout params of the TextView
-        RelativeLayout.LayoutParams mTxtResponseLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        mTxtResponseLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-        mTxtResponseLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
-        mTxtResponse.setLayoutParams(mTxtResponseLayoutParams);
-
-        // ImageView for the magic eight ball
-        mImgMagicEightBall = new ImageView(this);
-        mImgMagicEightBall.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        mImgMagicEightBall.setImageResource(R.drawable.circle1);
-
-        // Layout params of the ImageView
-        RelativeLayout.LayoutParams mImgMagicEightBallLayoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        mImgMagicEightBallLayoutParams.addRule(RelativeLayout.CENTER_VERTICAL, RelativeLayout.TRUE);
-        mImgMagicEightBallLayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
-        mImgMagicEightBallLayoutParams.setMargins(16, 16, 16, 16);
-        mImgMagicEightBall.setLayoutParams(mImgMagicEightBallLayoutParams);
-
-        // Add views
-        mContainer.addView(mImgBackground);
-        mContainer.addView(mTxtQuestion);
-        mContainer.addView(mBtnShake);
-        mContainer.addView(mRelativeLayoutMagicEightBall);
-        mRelativeLayoutMagicEightBall.addView(mImgMagicEightBall);
-        mRelativeLayoutMagicEightBall.addView(mTxtResponse);
-        setContentView(mContainer);
+        setContentView(R.layout.activity_main);
 
         mMagicEightBall = new MagicEightBallModel();
+
+        // Getting views
+        mTxtQuestion = (EditText) findViewById(R.id.txtQuestion);
+        mTxtResponse = (TextView) findViewById(R.id.txtResponse);
+        mImgMagicEightBall = (ImageView) findViewById(R.id.imgMagicEightBall);
+        mBtnHistory = (Button) findViewById(R.id.btnHistory);
+        mRelativeLayoutMagicEightBall = (RelativeLayout) findViewById(R.id.relativeLayoutMagicEightBall);
+
+        mBtnHistory.setOnClickListener(this);
+        mTxtQuestion.setOnEditorActionListener(this);
 
         mFadeOutAnimation = new AlphaAnimation(1, 0);
         mFadeOutAnimation.setDuration(500);
@@ -147,12 +74,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFadeInAnimation = new AlphaAnimation(0, 1);
         mFadeInAnimation.setDuration(500);
 
+
+        try {
+            FileInputStream fileInputStream = openFileInput(QUESTION_RESPONSE_LIST_FILENAME);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            Object object = objectInputStream.readObject();
+
+            objectInputStream.close();
+            fileInputStream.close();
+
+            mQuestionResponseList = (ArrayList<QuestionResponseModel>) object;
+        } catch (IOException | ClassNotFoundException e) {
+            mQuestionResponseList = new ArrayList<>();
+        }
+
+
     }
 
     @Override
     public void onClick(View view) {
-        if (view == mBtnShake) {
-            shakeMagicEightBall();
+        if (view == mBtnHistory) {
+            Intent intent = new Intent(this, HistoryActivity.class);
+            intent.putExtra(QUESTION_RESPONSE_LIST_KEY, mQuestionResponseList);
+            startActivity(intent);
         }
     }
 
@@ -186,9 +131,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation animation) {
                 if (animation == mFadeOutAnimation) {
+                    String question = mTxtQuestion.getText().toString();
+                    String response = mMagicEightBall.tellFortune();
+
                     Random random = new Random(System.currentTimeMillis());
                     mImgMagicEightBall.setImageResource(magicEightBallImages[random.nextInt(magicEightBallImages.length)]);
-                    mTxtResponse.setText(mMagicEightBall.tellFortune());
+                    mTxtResponse.setText(response);
+
+                    mQuestionResponseList.add(new QuestionResponseModel(question, response));
+
+                    try {
+                        FileOutputStream fileOutputStream = openFileOutput(QUESTION_RESPONSE_LIST_FILENAME, Context.MODE_PRIVATE);
+                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+                        objectOutputStream.writeObject(mQuestionResponseList);
+                        objectOutputStream.close();
+                        fileOutputStream.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
 
                     mRelativeLayoutMagicEightBall.startAnimation(mFadeInAnimation);
                 }
