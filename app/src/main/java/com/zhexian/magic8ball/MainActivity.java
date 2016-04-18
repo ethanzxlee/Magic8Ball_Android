@@ -2,7 +2,9 @@ package com.zhexian.magic8ball;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mBtnHistory;
     private RelativeLayout mRelativeLayoutMagicEightBall;
     private ArrayList<QuestionResponseModel> mQuestionResponseList;
+    private MediaPlayer mMediaPlayer;
 
     private AlphaAnimation mFadeOutAnimation;
     private AlphaAnimation mFadeInAnimation;
@@ -132,23 +135,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationEnd(Animation animation) {
                 if (animation == mFadeOutAnimation) {
                     String question = mTxtQuestion.getText().toString();
-                    String response = mMagicEightBall.tellFortune();
+                    Pair<String, Integer> response = mMagicEightBall.tellFortune();
 
                     Random random = new Random(System.currentTimeMillis());
                     mImgMagicEightBall.setImageResource(magicEightBallImages[random.nextInt(magicEightBallImages.length)]);
-                    mTxtResponse.setText(response);
+                    mTxtResponse.setText(response.first);
 
-                    mQuestionResponseList.add(new QuestionResponseModel(question, response));
+                    mQuestionResponseList.add(new QuestionResponseModel(question, response.first));
+                    archiveResponseToFile();
 
-                    try {
-                        FileOutputStream fileOutputStream = openFileOutput(QUESTION_RESPONSE_LIST_FILENAME, Context.MODE_PRIVATE);
-                        ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-                        objectOutputStream.writeObject(mQuestionResponseList);
-                        objectOutputStream.close();
-                        fileOutputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    playResponseWith(response.second);
 
                     mRelativeLayoutMagicEightBall.startAnimation(mFadeInAnimation);
                 }
@@ -164,5 +160,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFadeInAnimation.setAnimationListener(animationListener);
 
         mRelativeLayoutMagicEightBall.startAnimation(mFadeOutAnimation);
+    }
+
+
+    public void archiveResponseToFile() {
+        try {
+            FileOutputStream fileOutputStream = openFileOutput(QUESTION_RESPONSE_LIST_FILENAME, Context.MODE_PRIVATE);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(mQuestionResponseList);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void playResponseWith(int audioResource) {
+        try {
+            mMediaPlayer = MediaPlayer.create(this, audioResource);
+            mMediaPlayer.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
