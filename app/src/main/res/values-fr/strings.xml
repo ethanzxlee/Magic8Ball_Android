@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Magic8Ball</string>
+    <string name="ok">OK</string>
+    <string name="history">Histoire</string>
+    <string name="empty_question_title">Aucune question poséed</string>
+    <string name="empty_question_message">S\'il vous plaît poser une question avant de secouer les huit boule magique.</string>
+    <string name="ask_a_question">pose une question</string>
+
+    <string name="it_is_certain">Il est certain</string>
+    <string name="it_is_decidedly_so">Il est décidément donc</string>
+    <string name="without_a_doubt">Sans aucun doute</string>
+    <string name="yes_definitely">Oui définitivement</string>
+    <string name="you_may_rely_on_it">Vous pouvez compter sur elle</string>
+    <string name="as_i_see_it_yes">Comme je le vois oui</string>
+    <string name="most_likely">Le plus probable</string>
+    <string name="outlook_good">Bonne perspective</string>
+    <string name="yes">Oui</string>
+    <string name="signs_point_to_yes">Les signes pointent vers Oui</string>
+    <string name="reply_hazy_try_again">Répondre à nouveau essayer brumeux</string>
+    <string name="ask_again_later">Demander à nouveau plus tard</string>
+    <string name="better_not_tell_you_now">Mieux vaut ne pas vous dire maintenant</string>
+    <string name="cannot_predict_now">Vous ne pouvez pas prédire maintenant</string>
+    <string name="concentrate_and_ask_again">Concentrer et demander à nouveau</string>
+    <string name="dont_count_on_it">Ne pas compter sur elle</string>
+    <string name="my_reply_is_no">Ma réponse est non</string>
+    <string name="my_sources_say_no">Mes sources disent non</string>
+    <string name="outlook_not_so_good">Perspectives pas si bon</string>
+    <string name="very_doubtful">Très douteux</string>
+</resources>

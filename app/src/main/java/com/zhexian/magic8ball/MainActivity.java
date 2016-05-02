@@ -2,8 +2,10 @@ package com.zhexian.magic8ball;
 
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -26,9 +28,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnEditorActionListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnEditorActionListener, TextToSpeech.OnInitListener {
 
     private static final String QUESTION_RESPONSE_LIST_FILENAME = "QuestionResponseList.dat";
     public static final String QUESTION_RESPONSE_LIST_KEY = "QUESTION_RESPONSE_LIST_KEY";
@@ -41,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RelativeLayout mRelativeLayoutMagicEightBall;
     private ArrayList<QuestionResponseModel> mQuestionResponseList;
     private MediaPlayer mMediaPlayer;
+    private TextToSpeech mTextToSpeech;
+    private Boolean mTextToSpeechReady = false;
 
     private AlphaAnimation mFadeOutAnimation;
     private AlphaAnimation mFadeInAnimation;
@@ -92,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mQuestionResponseList = new ArrayList<>();
         }
 
+        mTextToSpeech = new TextToSpeech(getApplicationContext(), this);
 
     }
 
@@ -118,9 +125,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void shakeMagicEightBall() {
         if (mTxtQuestion.getText().toString().trim().length() == 0) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-            alertDialogBuilder.setTitle("No question asked");
-            alertDialogBuilder.setMessage("Please ask a question before shaking the magic eight ball.");
-            alertDialogBuilder.setPositiveButton("OK", null);
+            alertDialogBuilder.setTitle(getResources().getString(R.string.empty_question_title));
+            alertDialogBuilder.setMessage(getResources().getString(R.string.empty_question_message));
+            alertDialogBuilder.setPositiveButton(getResources().getString(R.string.ok), null);
             alertDialogBuilder.show();
             return;
         }
@@ -135,16 +142,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onAnimationEnd(Animation animation) {
                 if (animation == mFadeOutAnimation) {
                     String question = mTxtQuestion.getText().toString();
-                    Pair<String, Integer> response = mMagicEightBall.tellFortune();
+                    Pair<Integer, Integer> response = mMagicEightBall.tellFortune();
 
                     Random random = new Random(System.currentTimeMillis());
                     mImgMagicEightBall.setImageResource(magicEightBallImages[random.nextInt(magicEightBallImages.length)]);
-                    mTxtResponse.setText(response.first);
+                    mTxtResponse.setText(getResources().getString(response.first));
 
-                    mQuestionResponseList.add(new QuestionResponseModel(question, response.first));
+                    mQuestionResponseList.add(new QuestionResponseModel(question, getResources().getString(response.first)));
                     archiveResponseToFile();
 
-                    playResponseWith(response.second);
+                    playResponseWith(getResources().getString(response.first));
 
                     mRelativeLayoutMagicEightBall.startAnimation(mFadeInAnimation);
                 }
@@ -175,12 +182,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void playResponseWith(int audioResource) {
-        try {
-            mMediaPlayer = MediaPlayer.create(this, audioResource);
-            mMediaPlayer.start();
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    public void playResponseWith(String text) {
+        if (mTextToSpeechReady) {
+            HashMap<String, String> hash = new HashMap<String,String>();
+            hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
+                    String.valueOf(AudioManager.STREAM_NOTIFICATION));
+
+            mTextToSpeech.speak(text, TextToSpeech.QUEUE_ADD, hash);
         }
+    }
+
+    @Override
+    public void onInit(int status) {
+        if (status == TextToSpeech.SUCCESS) {
+            mTextToSpeech.setLanguage(Locale.getDefault());
+            mTextToSpeechReady = true;
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        mTextToSpeech.shutdown();
+        super.onDestroy();
     }
 }

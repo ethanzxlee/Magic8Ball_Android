@@ -18,7 +18,7 @@
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
         android:layout_margin="16dp"
-        android:hint="Ask a question"
+        android:hint="@string/ask_a_question"
         android:imeOptions="actionGo"
         android:singleLine="true"
         android:inputType="textAutoComplete"/>
@@ -29,7 +29,7 @@
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        android:text="History" />
+        android:text="@string/history" />
 
     <RelativeLayout
         android:id="@+id/relativeLayoutMagicEightBall"

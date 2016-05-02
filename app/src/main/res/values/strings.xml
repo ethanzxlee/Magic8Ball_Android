@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">Magic8Ball</string>
+    <string name="ok">OK</string>
+    <string name="history">History</string>
+    <string name="empty_question_title">No question asked</string>
+    <string name="empty_question_message">Please ask a question before shaking the magic eight ball.</string>
+    <string name="ask_a_question">Ask a question</string>
+
+    <string name="it_is_certain">It is certain</string>
+    <string name="it_is_decidedly_so">It is decidedly so</string>
+    <string name="without_a_doubt">Without a doubt</string>
+    <string name="yes_definitely">Yes, definitely</string>
+    <string name="you_may_rely_on_it">You may rely on it</string>
+    <string name="as_i_see_it_yes">As I see it, yes</string>
+    <string name="most_likely">Most likely</string>
+    <string name="outlook_good">Outlook good</string>
+    <string name="yes">Yes</string>
+    <string name="signs_point_to_yes">Signs point to yes</string>
+    <string name="reply_hazy_try_again">Reply hazy try again</string>
+    <string name="ask_again_later">Ask again later</string>
+    <string name="better_not_tell_you_now">Better not tell you know</string>
+    <string name="cannot_predict_now">Cannot predict now</string>
+    <string name="concentrate_and_ask_again">Concentrate and ask again</string>
+    <string name="dont_count_on_it">Don\'t count on it</string>
+    <string name="my_reply_is_no">My reply is no</string>
+    <string name="my_sources_say_no">My sources say no</string>
+    <string name="outlook_not_so_good">Outlook not so good</string>
+    <string name="very_doubtful">Very doubtful</string>
 </resources>
