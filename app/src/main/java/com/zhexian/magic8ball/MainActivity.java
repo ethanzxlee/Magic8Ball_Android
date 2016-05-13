@@ -3,12 +3,12 @@ package com.zhexian.magic8ball;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
@@ -22,20 +22,21 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnEditorActionListener, TextToSpeech.OnInitListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, OnEditorActionListener, TextToSpeech.OnInitListener, Response.Listener<String>, Response.ErrorListener {
 
-    private static final String QUESTION_RESPONSE_LIST_FILENAME = "QuestionResponseList.dat";
-    public static final String QUESTION_RESPONSE_LIST_KEY = "QUESTION_RESPONSE_LIST_KEY";
+    private static final String POST_QUESTION_RESPONSE_URL = "http://li859-75.members.linode.com/addEntry.php";
+    private static final String USERNAME = "zxl653";
 
     private MagicEightBallModel mMagicEightBall;
     private EditText mTxtQuestion;
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button mBtnHistory;
     private RelativeLayout mRelativeLayoutMagicEightBall;
     private ArrayList<QuestionResponseModel> mQuestionResponseList;
-    private MediaPlayer mMediaPlayer;
     private TextToSpeech mTextToSpeech;
     private Boolean mTextToSpeechReady = false;
 
@@ -83,30 +83,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mFadeInAnimation = new AlphaAnimation(0, 1);
         mFadeInAnimation.setDuration(500);
 
-
-        try {
-            FileInputStream fileInputStream = openFileInput(QUESTION_RESPONSE_LIST_FILENAME);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-
-            Object object = objectInputStream.readObject();
-
-            objectInputStream.close();
-            fileInputStream.close();
-
-            mQuestionResponseList = (ArrayList<QuestionResponseModel>) object;
-        } catch (IOException | ClassNotFoundException e) {
-            mQuestionResponseList = new ArrayList<>();
-        }
-
         mTextToSpeech = new TextToSpeech(getApplicationContext(), this);
-
     }
 
     @Override
     public void onClick(View view) {
         if (view == mBtnHistory) {
             Intent intent = new Intent(this, HistoryActivity.class);
-            intent.putExtra(QUESTION_RESPONSE_LIST_KEY, mQuestionResponseList);
             startActivity(intent);
         }
     }
@@ -143,15 +126,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (animation == mFadeOutAnimation) {
                     String question = mTxtQuestion.getText().toString();
                     Pair<Integer, Integer> response = mMagicEightBall.tellFortune();
-
                     Random random = new Random(System.currentTimeMillis());
+
                     mImgMagicEightBall.setImageResource(magicEightBallImages[random.nextInt(magicEightBallImages.length)]);
                     mTxtResponse.setText(getResources().getString(response.first));
 
-                    mQuestionResponseList.add(new QuestionResponseModel(question, getResources().getString(response.first)));
-                    archiveResponseToFile();
-
-                    playResponseWith(getResources().getString(response.first));
+                    postQuestionResponseModel(question, getResources().getString(response.first));
+                    //playResponseWith(getResources().getString(response.first));
 
                     mRelativeLayoutMagicEightBall.startAnimation(mFadeInAnimation);
                 }
@@ -170,26 +151,37 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void archiveResponseToFile() {
-        try {
-            FileOutputStream fileOutputStream = openFileOutput(QUESTION_RESPONSE_LIST_FILENAME, Context.MODE_PRIVATE);
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            objectOutputStream.writeObject(mQuestionResponseList);
-            objectOutputStream.close();
-            fileOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void playResponseWith(String text) {
+    private void playResponseWith(String text) {
         if (mTextToSpeechReady) {
-            HashMap<String, String> hash = new HashMap<String,String>();
+            HashMap<String, String> hash = new HashMap<String, String>();
             hash.put(TextToSpeech.Engine.KEY_PARAM_STREAM,
                     String.valueOf(AudioManager.STREAM_NOTIFICATION));
 
             mTextToSpeech.speak(text, TextToSpeech.QUEUE_ADD, hash);
         }
+    }
+
+    private void postQuestionResponseModel(final String question, final String response) {
+        StringRequest stringRequest = new StringRequest(StringRequest.Method.POST, POST_QUESTION_RESPONSE_URL, this, this) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put(QuestionResponseModel.QUESTION, question);
+                params.put(QuestionResponseModel.ANSWER, response);
+                params.put(QuestionResponseModel.USERNAME, USERNAME);
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                headers.put("Content-Type", "application/x-www-form-urlencoded");
+
+                return headers;
+            }
+        };
+        MagicEightBallApplication.getInstance().getRequestQueue().add(stringRequest);
     }
 
     @Override
@@ -198,12 +190,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mTextToSpeech.setLanguage(Locale.getDefault());
             mTextToSpeechReady = true;
         }
-
     }
 
     @Override
     protected void onDestroy() {
         mTextToSpeech.shutdown();
         super.onDestroy();
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Log.d("POST_RESPONSE_ERROR", error.getLocalizedMessage());
+    }
+
+    @Override
+    public void onResponse(String response) {
+        Log.d("POST_RESPONSE", response);
     }
 }

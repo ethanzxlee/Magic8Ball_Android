@@ -5,12 +5,12 @@
     android:layout_height="match_parent"
     tools:context="com.zhexian.magic8ball.MainActivity">
 
-    <ImageView
-        android:id="@+id/img_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/background" />
+    <!--<ImageView-->
+    <!--android:id="@+id/img_background"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:scaleType="fitXY"-->
+    <!--android:src="@drawable/background" />-->
 
     <EditText
         android:id="@+id/txtQuestion"
@@ -20,8 +20,8 @@
         android:layout_margin="16dp"
         android:hint="@string/ask_a_question"
         android:imeOptions="actionGo"
-        android:singleLine="true"
-        android:inputType="textAutoComplete"/>
+        android:inputType="textAutoComplete"
+        android:singleLine="true" />
 
     <Button
         android:id="@+id/btnHistory"

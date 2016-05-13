@@ -11,19 +11,19 @@
 
     <TextView
         android:id="@+id/historyTitleTextView"
+        style="@style/Base.TextAppearance.AppCompat.Headline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:text="@string/history"
-        android:textColor="@color/colorAccent"
-        style="@style/Base.TextAppearance.AppCompat.Headline" />
+        android:textColor="@color/colorAccent" />
 
     <ListView
+        android:id="@+id/historyListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/historyListView"
-        android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:layout_below="@id/historyTitleTextView" />
+        android:layout_below="@id/historyTitleTextView"
+        android:layout_marginTop="@dimen/activity_vertical_margin" />
 
 </RelativeLayout>

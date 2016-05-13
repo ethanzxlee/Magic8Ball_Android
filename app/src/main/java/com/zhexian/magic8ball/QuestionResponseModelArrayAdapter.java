@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.android.volley.toolbox.NetworkImageView;
+
 import java.util.List;
 
 /**
@@ -14,36 +16,44 @@ import java.util.List;
  */
 public class QuestionResponseModelArrayAdapter extends ArrayAdapter<QuestionResponseModel> {
 
-    private static class ViewHolder {
-        TextView questionTextView;
-        TextView responseTextView;
-    }
-
-
     public QuestionResponseModelArrayAdapter(Context context, List<QuestionResponseModel> questionResponseModelList) {
-        super(context, android.R.layout.simple_list_item_2, questionResponseModelList);
+        super(context, R.layout.history_list_item, questionResponseModelList);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View view, ViewGroup parent) {
         ViewHolder viewHolder;
 
-        if (convertView == null) {
+        if (view == null) {
+            // Initialise view holder
             viewHolder = new ViewHolder();
+
+            // Inflate view
             LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(android.R.layout.simple_list_item_2, parent, false);
+            view = inflater.inflate(R.layout.history_list_item, parent, false);
 
-            viewHolder.questionTextView = (TextView) convertView.findViewById(android.R.id.text1);
-            viewHolder.responseTextView = (TextView) convertView.findViewById(android.R.id.text2);
+            // Find views
+            viewHolder.questionTextView = (TextView) view.findViewById(R.id.history_list_item_question);
+            viewHolder.responseTextView = (TextView) view.findViewById(R.id.history_list_item_response);
+            viewHolder.profilePictureImageView = (NetworkImageView) view.findViewById(R.id.history_list_item_profile_pic);
 
-            convertView.setTag(viewHolder);
+            view.setTag(viewHolder);
         } else {
-            viewHolder = (ViewHolder) convertView.getTag();
+            viewHolder = (ViewHolder) view.getTag();
         }
 
+        viewHolder.position = position;
         viewHolder.questionTextView.setText(getItem(position).getQuestion());
         viewHolder.responseTextView.setText(getItem(position).getResponse());
+        viewHolder.profilePictureImageView.setImageUrl(getItem(position).getImageUrl(), MagicEightBallApplication.getInstance().getImageLoader());
 
-        return convertView;
+        return view;
+    }
+
+    private class ViewHolder {
+        int position;
+        TextView questionTextView;
+        TextView responseTextView;
+        NetworkImageView profilePictureImageView;
     }
 }

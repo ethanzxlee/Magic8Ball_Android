@@ -10,10 +10,15 @@ import java.util.Random;
 
 /**
  * Created by ZheXian on 07/03/2016.
- *
  */
 public class MagicEightBallModel {
 
+
+    private List<Pair<Integer, Integer>> responseArray;
+
+    public MagicEightBallModel() {
+        responseArray = new ArrayList<>(initialResponseArray());
+    }
 
     private static List<Pair<Integer, Integer>> initialResponseArray() {
 
@@ -38,17 +43,6 @@ public class MagicEightBallModel {
                 new Pair<>(R.string.outlook_not_so_good, R.raw.outlook_not_so_good),
                 new Pair<>(R.string.very_doubtful, R.raw.very_doubtful));
     }
-
-    private List<Pair<Integer, Integer>> responseArray;
-
-    public MagicEightBallModel() {
-        responseArray = new ArrayList<>(initialResponseArray());
-    }
-
-//    public MagicEightBallModel(List<Pair<String, Integer>> extraResponseArray) {
-//        responseArray = new ArrayList<>(initialResponseArray());
-//        responseArray.addAll(extraResponseArray);
-//    }
 
     public Pair<Integer, Integer> tellFortune() {
         Random random = new Random(System.currentTimeMillis());
