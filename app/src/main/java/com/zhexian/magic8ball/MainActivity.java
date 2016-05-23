@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mImgMagicEightBall;
     private Button mBtnHistory;
     private RelativeLayout mRelativeLayoutMagicEightBall;
-    private ArrayList<QuestionResponseModel> mQuestionResponseList;
     private TextToSpeech mTextToSpeech;
     private Boolean mTextToSpeechReady = false;
 
@@ -132,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     mTxtResponse.setText(getResources().getString(response.first));
 
                     postQuestionResponseModel(question, getResources().getString(response.first));
-                    //playResponseWith(getResources().getString(response.first));
+                    playResponseWith(getResources().getString(response.first));
 
                     mRelativeLayoutMagicEightBall.startAnimation(mFadeInAnimation);
                 }

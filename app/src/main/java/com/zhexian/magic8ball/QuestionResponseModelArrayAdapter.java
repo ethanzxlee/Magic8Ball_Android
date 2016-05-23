@@ -42,7 +42,6 @@ public class QuestionResponseModelArrayAdapter extends ArrayAdapter<QuestionResp
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        viewHolder.position = position;
         viewHolder.questionTextView.setText(getItem(position).getQuestion());
         viewHolder.responseTextView.setText(getItem(position).getResponse());
         viewHolder.profilePictureImageView.setImageUrl(getItem(position).getImageUrl(), MagicEightBallApplication.getInstance().getImageLoader());
@@ -51,7 +50,6 @@ public class QuestionResponseModelArrayAdapter extends ArrayAdapter<QuestionResp
     }
 
     private class ViewHolder {
-        int position;
         TextView questionTextView;
         TextView responseTextView;
         NetworkImageView profilePictureImageView;
